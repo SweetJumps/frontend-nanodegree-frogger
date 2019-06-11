@@ -1,6 +1,8 @@
+'use strict';
+
 // Enemies our player must avoid
 class Enemy {
-    constructor(howFast, xPos, yPos) {
+    constructor(howFast, x, y) {
         // Variables applied to each of our instances go here,
         // we've provided one for you to get started
         // The image/sprite for our enemies, this uses
@@ -8,8 +10,8 @@ class Enemy {
 
         this.sprite = 'images/enemy-bug.png';
         this.howFast = howFast;
-        this.xPos = xPos;
-        this.yPos = yPos;
+        this.x = x;
+        this.y = y;
     }
 
     // Update the enemy's position, required method for game
@@ -18,11 +20,11 @@ class Enemy {
         // You should multiply any movement by the dt parameter
         // which will ensure the game runs at the same speed for
         // all computers.
-        this.xPos += dt * this.howFast;
+        this.x += dt * this.howFast;
 
         // if the enemy is off the right side of the screen, return it to the left side
-        if (this.xPos >= 505) {
-            this.xPos = -125;
+        if (this.x >= 505) {
+            this.x = -125;
         }
         
         // collisions will only happen on three player position y values - 42, 125 and 208 
@@ -31,17 +33,16 @@ class Enemy {
         // use the abs() function when determining the distance between player and enemy
         // this covers a collision of + or - 50
 
-        let enemyYPos = this.yPos - 20;
-        let enemyXPos = this.xPos;
+        let enemyYPos = this.y - 20;
+        let enemyXPos = this.x;
 
         if ((Math.abs(enemyXPos - player.x) <= 50) && enemyYPos == player.y ){
             player.resetPosition();
         }
-
     }
-    // Draw the enemy on the screen, required method for game
+    // Draw the player on the screen, required method for game
     render() {
-        ctx.drawImage(Resources.get(this.sprite), this.xPos, this.yPos);
+        ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
     }
 }
 
@@ -70,33 +71,43 @@ class Player {
         // If icrementing the current value would result in the player moving off screen then the key press is ignored
         switch (e) {
             case 'left':
-                if (player.x >= 101){
-                    player.x -= 101;
+                if (this.x >= 101){
+                    this.x -= 101;
                 }
                 break;
             case 'right':
-                if (player.x <= 303) {
-                    player.x += 101;
+                if (this.x <= 303) {
+                    this.x += 101;
                 }
                 break;
             case 'up':
-                if (player.y >= 42) {
-                    player.y -= 83;
+                if (this.y >= 42) {
+                    this.y -= 83;
                 }
                 // if the current y position is less than or equal to zero they made it to the river and won
-                if (player.y <= 0) {
+                if (this.y <= 0) {
                     //pause a half second before returning player to starting position
                     setTimeout(function () { player.resetPosition(); }, 500);
                 }
                 break;
             case 'down':
-                if (player.y <= 332) {
-                    player.y += 83;
+                if (this.y <= 332) {
+                    this.y += 83;
                 }
                 break;
         } 
     }
 }
+
+// I tried the super class / extend technique for the render class but had problems so leaving it the way it is
+// got an error in engine.js - TypeError: enemy.render is not a function
+// Draw the object on the screen, required method for game
+//class render extends Enemy {
+//    constructor(sprite, x, y) {
+//        super(sprite, x, y);
+//        ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+//    }
+//}
 
 // Now instantiate your objects.
 // Place all player objects in an array called allEnemies
