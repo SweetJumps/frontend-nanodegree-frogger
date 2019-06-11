@@ -6,13 +6,12 @@ class Enemy {
         // The image/sprite for our enemies, this uses
         // a helper we've provided to easily load images
 
-        //console.log('x:' + xPos + ' y:' + yPos);
-
         this.sprite = 'images/enemy-bug.png';
         this.howFast = howFast;
         this.xPos = xPos;
         this.yPos = yPos;
     }
+
     // Update the enemy's position, required method for game
     // Parameter: dt, a time delta between ticks
     update(dt) {
@@ -20,15 +19,17 @@ class Enemy {
         // which will ensure the game runs at the same speed for
         // all computers.
         this.xPos += dt * this.howFast;
-        //console.log(this.xPos, this.yPos);
+
+        // if the enemy is off the right side of the screen, return it to the left side
         if (this.xPos >= 505) {
             this.xPos = -125;
-        //    this.howFast = 50*(Math.floor(Math.random() * 5));
         }
         
-        // collision logic here
         // collisions will only happen on three player position y values - 42, 125 and 208 
         // collisions will only happen on three enemy position y values - 62, 145 and 228 
+        // subtract 20 from the enemy position to make the comparison easier
+        // use the abs() function when determining the distance between player and enemy
+        // this covers a collision of + or - 50
 
         let enemyYPos = this.yPos - 20;
         let enemyXPos = this.xPos;
@@ -37,8 +38,6 @@ class Enemy {
             player.resetPosition();
         }
 
-
-
     }
     // Draw the enemy on the screen, required method for game
     render() {
@@ -46,11 +45,7 @@ class Enemy {
     }
 }
 
-
-
-// Now write your own player class
-// This class requires an update(), render() and
-// a handleInput() method.
+// player class
 class Player {
     constructor() {
         // The image/sprite for our player, this uses
@@ -59,14 +54,7 @@ class Player {
         this.resetPosition();
     }
 
-    // Update the player's position, required method for game
-    update() {
-        // You should multiply any movement by the dt parameter
-        // which will ensure the game runs at the same speed for
-        // all computers.
-        console.log("player update");
-    }
-
+    // Places the player at the starting position
     resetPosition() {
         this.x = 202;
         this.y = 374;
@@ -76,10 +64,10 @@ class Player {
     render() {
         ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
     }
-    // Handles player keypress input
+
     handleInput(e) {
-        // code goes here
-        //console.log("handleInput " + e + ' x' + player.x + ' y' + player.y);
+        // This case statement increments the player position based on which key was pressed.
+        // If icrementing the current value would result in the player moving off screen then the key press is ignored
         switch (e) {
             case 'left':
                 if (player.x >= 101){
@@ -95,11 +83,11 @@ class Player {
                 if (player.y >= 42) {
                     player.y -= 83;
                 }
+                // if the current y position is less than or equal to zero they made it to the river and won
                 if (player.y <= 0) {
-                    //alert ('You won!');
+                    //pause a half second before returning player to starting position
                     setTimeout(function () { player.resetPosition(); }, 500);
                 }
-
                 break;
             case 'down':
                 if (player.y <= 332) {
@@ -107,12 +95,8 @@ class Player {
                 }
                 break;
         } 
-        //console.log("handleInput " + e + ' x' + player.x + ' y' + player.y);
     }
 }
-
-
-
 
 // Now instantiate your objects.
 // Place all player objects in an array called allEnemies
