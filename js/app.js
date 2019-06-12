@@ -1,17 +1,24 @@
 'use strict';
 
-// Enemies our player must avoid
-class Enemy {
-    constructor(howFast, x, y) {
-        // Variables applied to each of our instances go here,
-        // we've provided one for you to get started
-        // The image/sprite for our enemies, this uses
-        // a helper we've provided to easily load images
-
-        this.sprite = 'images/enemy-bug.png';
-        this.howFast = howFast;
+// base class for enemies and player
+class BaseClass {
+    constructor(x, y, sprite) {
         this.x = x;
         this.y = y;
+        this.sprite = sprite;
+    }
+
+    // Draw the player and enemy images on the screen, required method for game
+    render() {
+        ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+    }
+}
+
+// Enemies our player must avoid
+class Enemy extends BaseClass {
+    constructor(x, y, sprite, howFast) {
+        super(x, y, sprite);
+        this.howFast = howFast;
     }
 
     // Update the enemy's position, required method for game
@@ -40,30 +47,18 @@ class Enemy {
             player.resetPosition();
         }
     }
-    // Draw the player on the screen, required method for game
-    render() {
-        ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-    }
 }
 
 // player class
-class Player {
-    constructor() {
-        // The image/sprite for our player, this uses
-        // a helper we've provided to easily load images
-        this.sprite = 'images/char-boy.png';
-        this.resetPosition();
+class Player extends BaseClass {
+    constructor(x, y, sprite) {
+        super(x, y, sprite);
     }
 
     // Places the player at the starting position
     resetPosition() {
         this.x = 202;
         this.y = 374;
-    }
-
-    // Draw the player on the screen, required method for game
-    render() {
-        ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
     }
 
     handleInput(e) {
@@ -84,10 +79,11 @@ class Player {
                 if (this.y >= 42) {
                     this.y -= 83;
                 }
-                // if the current y position is less than or equal to zero they made it to the river and won
+                // if the current y position is less than or equal to zero then they made it to the river and won
                 if (this.y <= 0) {
+                    let myself = this;
                     //pause a half second before returning player to starting position
-                    setTimeout(function () { player.resetPosition(); }, 500);
+                    setTimeout(function () { myself.resetPosition(); }, 500);
                 }
                 break;
             case 'down':
@@ -99,22 +95,15 @@ class Player {
     }
 }
 
-// I tried the super class / extend technique for the render class but had problems so leaving it the way it is
-// got an error in engine.js - TypeError: enemy.render is not a function
-// Draw the object on the screen, required method for game
-//class render extends Enemy {
-//    constructor(sprite, x, y) {
-//        super(sprite, x, y);
-//        ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-//    }
-//}
-
 // Now instantiate your objects.
 // Place all player objects in an array called allEnemies
 // Place the player object in a variable called player
 
-let allEnemies = [new Enemy(400, 100, 62), new Enemy(200, 200, 145), new Enemy(300, -150, 228)];
-let player = new Player;
+let allEnemies = [new Enemy(100, 62, 'images/enemy-bug.png', 400), new Enemy(200, 145, 'images/enemy-bug.png', 200), new Enemy(-150, 228, 'images/enemy-bug.png', 300)];
+let player = new Player(202, 374, 'images/char-boy.png');
+
+console.log(player);
+console.log(allEnemies);
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
